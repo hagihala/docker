@@ -5,7 +5,13 @@ rescue LoadError
 
   require 'chef/resource/chef_gem'
 
-  docker = Chef::Resource::ChefGem.new('docker-api', run_context)
-  docker.version '= 1.28.0'
-  docker.run_action(:install)
+  whyrun_config = Chef::Config[:why_run]
+  begin
+    Chef::Config[:why_run] = false
+    docker = Chef::Resource::ChefGem.new('docker-api', run_context)
+    docker.version '= 1.28.0'
+    docker.run_action(:install)
+  ensure
+    Chef::Config[:why_run] = whyrun_config
+  end
 end
